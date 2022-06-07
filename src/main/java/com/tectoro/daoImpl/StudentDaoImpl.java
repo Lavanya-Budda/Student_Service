@@ -20,25 +20,36 @@ public class StudentDaoImpl implements StudentDao {
         cfg.configure("hibernate.cfg.xml");
         SessionFactory factory = cfg.buildSessionFactory();
         Session session = factory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(student);
-        transaction.commit();
-        session.close();
+        try {
+            Transaction transaction = session.beginTransaction();
+            session.save(student);
+            transaction.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
         return "Student details added successfully!!!";
     }
 
     @Override
     public Student saveStudent(Student student) {
+
         Configuration cfg = new Configuration();
         cfg.configure("hibernate.cfg.xml");
         SessionFactory factory = cfg.buildSessionFactory();
         Session session = factory.openSession();
-        Transaction transaction = session.beginTransaction();
-        System.out.println("Before save!!");
-        session.save(student);
-        System.out.println("After save");
-        transaction.commit();
-        session.close();
+        try {
+            Transaction transaction = session.beginTransaction();
+            System.out.println("Before save!!");
+            session.save(student);
+            System.out.println("After save");
+            transaction.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
         return student;
     }
 
@@ -71,18 +82,22 @@ public class StudentDaoImpl implements StudentDao {
         SessionFactory factory = cfg.buildSessionFactory();
         Session session = factory.openSession();
         Student student=new Student();
-        Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery("select new Student(s.sId,s.sName,s.sAge) from Student as s where s.sId="+sId);
-        List<Student> s=query.list();
-        for (Student n:s
-             ) {
-            student.setsId(n.getsId());
-            student.setsName(n.getsName());
-            student.setsAge(n.getsAge());
+        try {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("select new Student(s.sId,s.sName,s.sAge) from Student as s where s.sId="+sId);
+            List<Student> s=query.list();
+            for (Student n:s
+            ) {
+                student.setsId(n.getsId());
+                student.setsName(n.getsName());
+                student.setsAge(n.getsAge());
+            }
+            transaction.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            session.close();
         }
-        transaction.commit();
-        session.close();
-
         return student;
     }
 }
